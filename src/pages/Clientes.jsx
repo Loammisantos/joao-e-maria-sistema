@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useStore } from '../store/StoreContext';
-import { Search, Plus, Edit2, Trash2 } from 'lucide-react';
+import { Search, Plus, Edit2, Trash2, MessageCircle } from 'lucide-react';
 import { ClienteModal } from '../components/clientes/ClienteModal';
 import { DeleteConfirmModal } from '../components/products/DeleteConfirmModal'; // Reusing generic delete UI
 
@@ -41,6 +41,13 @@ export function Clientes() {
     }
   };
 
+  const openWhatsApp = (cliente) => {
+    if (!cliente.telefone) return;
+    const cleanPhone = cliente.telefone.replace(/\D/g, '');
+    const message = encodeURIComponent(`Olá ${cliente.nome}, tudo bem?`);
+    window.open(`https://wa.me/55${cleanPhone}?text=${message}`, '_blank');
+  };
+
   return (
     <div className="flex flex-col h-full">
       <div className="flex items-center justify-between mb-6">
@@ -78,7 +85,7 @@ export function Clientes() {
                 <th className="px-6 py-3 font-semibold text-slate-600 text-sm">Cliente</th>
                 <th className="px-6 py-3 font-semibold text-slate-600 text-sm">Documento</th>
                 <th className="px-6 py-3 font-semibold text-slate-600 text-sm">Contato</th>
-                <th className="px-6 py-3 font-semibold text-slate-600 text-sm w-24 text-right">Ações</th>
+                <th className="px-6 py-3 font-semibold text-slate-600 text-sm w-32 text-right">Ações</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -95,7 +102,16 @@ export function Clientes() {
                     {cliente.email && <div className="text-slate-500 text-xs">{cliente.email}</div>}
                   </td>
                   <td className="px-6 py-4">
-                    <div className="flex items-center justify-end gap-3">
+                    <div className="flex items-center justify-end gap-2">
+                      {cliente.telefone && (
+                        <button 
+                          onClick={() => openWhatsApp(cliente)} 
+                          className="text-slate-400 hover:text-green-600 transition-colors p-2 hover:bg-green-50 rounded-lg" 
+                          title="Falar no WhatsApp"
+                        >
+                          <MessageCircle size={18} />
+                        </button>
+                      )}
                       <button onClick={() => handleEdit(cliente)} className="text-slate-400 hover:text-brand-600 transition-colors p-2 hover:bg-brand-50 rounded-lg" title="Editar">
                         <Edit2 size={18} />
                       </button>
